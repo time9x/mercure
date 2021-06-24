@@ -57,6 +57,11 @@ func authorize(r *http.Request, jwtConfig *jwtConfig, publishOrigins []string) (
 		return validateJWT(authorizationHeaders[0][7:], jwtConfig)
 	}
 
+	query, _ := url.ParseQuery(r.URL.RawQuery)
+	if _, ok := query["mercureAuthorization"]; ok {
+		return validateJWT(query["mercureAuthorization"][0], jwtConfig)
+	}
+
 	cookie, err := r.Cookie("mercureAuthorization")
 	if err != nil {
 		// Anonymous
